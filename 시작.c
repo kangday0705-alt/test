@@ -24,15 +24,15 @@ int gen_answer(int maxnum) {
 	return (rand() % maxnum) + 1;
 }
 
-int score(int att, int maxatt, int bonus) {
-	int base = 100;
-	int n = att * (100 / maxatt);
+int score(int att, int maxatt, int bonus, int lev) {
+	int base = 100 * lev;
+	int n = (att-1) * (base / maxatt);
 	int score = base - n + bonus;
 	return score;
 }
 
-int gameplay(gamestate *g) {
-	int guess, bonus=0;
+int gameplay(gamestate* g, int lev) {
+	int guess, bonus = 0;
 	g->att = 0;
 	while (1) {
 		printf("입력: ");
@@ -54,10 +54,10 @@ int gameplay(gamestate *g) {
 		}
 	}
 
-	int sc = score(g->att, g->maxatt, bonus);
+	int sc = score(g->att, g->maxatt, bonus, lev);
 	printf("%d점", sc);
 	return sc;
- }
+}
 
 //void save() {
 //	FILE* fp = fopen("player.txt", "w");
@@ -76,10 +76,10 @@ void game() {
 	printf("업다운게임\n난이도 선택(1~3): ");
 	scanf_s("%d", &lev);
 
-	switch(lev) {
-	case 1 :
+	switch (lev) {
+	case 1:
 		g.maxnum = 30;
-		g.maxatt = 10;
+		g.maxatt = 15;
 		break;
 	case 2:
 		g.maxnum = 500;
@@ -87,15 +87,12 @@ void game() {
 		break;
 	case 3:
 		g.maxnum = 100;
-		g.maxatt = 5;
+		g.maxatt = 10;
 		break;
 	}
 
-	printf("사용자 이름: ");
-	scanf_s("%s", arr);
-
 	g.answer = gen_answer(g.maxnum);
-	gameplay(&g);
+	gameplay(&g, lev);
 
 	//난이도정하고 게임실행, 종료, 기록출력
 }
@@ -104,3 +101,4 @@ int main(void) {
 	seed();
 	game();
 }
+

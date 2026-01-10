@@ -3,11 +3,13 @@
 #include <time.h>
 #include <string.h>
 
+//player:이름,최고기록
 typedef struct {
 	char name[20];
 	int bestscore;
 } player;
 
+//gamestate:답,범위,횟수제한
 typedef struct {
 	int answer;
 	int maxnum;
@@ -15,15 +17,17 @@ typedef struct {
 	int att;
 } gamestate;
 
-
+//rand의 씨드를 시간베이스로
 void seed() {
 	srand((unsigned)time(NULL));
 }
 
+//정답(난수)리턴
 int gen_answer(int maxnum) {
 	return (rand() % maxnum) + 1;
 }
 
+//점수계산>gameplay
 int score(int att, int maxatt, int bonus, int lev) {
 	int base = 100 * lev;
 	int n = (att-1) * (base / maxatt);
@@ -31,6 +35,7 @@ int score(int att, int maxatt, int bonus, int lev) {
 	return score;
 }
 
+//입력값과 답 비교, score불러오기
 int gameplay(gamestate* g, int lev) {
 	int guess, bonus = 0;
 	g->att = 0;
@@ -54,23 +59,57 @@ int gameplay(gamestate* g, int lev) {
 		}
 	}
 
+	//score함수에 gamestate의 정보 넣고 실행
 	int sc = score(g->att, g->maxatt, bonus, lev);
 	printf("%d점", sc);
 	return sc;
 }
 
-//void save() {
-//	FILE* fp = fopen("player.txt", "w");
-//	fprintf;
-//}
-//
-//void read() {
-//
-//}
+//플레이어 카운트
+int read(player p[], int max) {
+	FILE* fp = fopen("player.txt", "r");
+	if (!fp) return 0;
+
+	int count = 0;
+	while (fscanf(fp, "%s %d\n", p[count].name, &p[count].bestscore) != EOF) {
+		count++;
+		if (count >= max) break;
+	}
+	fclose(fp);
+	return count;
+
+}
+
+//플레이어 저장
+void save(player p[], int count) {
+	FILE* fp = fopen("player.txt", "w");
+	for (int i = 0; i < count; i++) {
+		fprintf(fp, "%s %d\n", p[i].name, p[i].bestscore);
+	}
+	fclose(fp);
+}
+
+int find(player p[], int count, char* name) {
+	FILE* fp = fopen("player.txt", "w");
+	if (!fp) return 0;
+
+	for (int i = 0; i < count; i++) {
+
+		if () {
+			return i;
+		}
+	}
+	
+
+	return -1;
+	//신규인지 판별>-1
+}
 
 void game() {
-	int lev;
-	char arr[20];
+	int lev, pcount=1;
+	char name[20];
+	player players[100];
+
 	gamestate g = { 0 };
 
 	printf("업다운게임\n난이도 선택(1~3): ");
@@ -91,14 +130,29 @@ void game() {
 		break;
 	}
 
+	printf("사용자 이름: ");
+	scanf_s("%s", name, 20);
+
+	int idx = find(players, pcount, &name);
+
+	
+
+
 	g.answer = gen_answer(g.maxnum);
 	gameplay(&g, lev);
 
-	//난이도정하고 게임실행, 종료, 기록출력
+	if (idx == -1) {
+
+	}
+	else {
+		if (gameplay(&g, lev) > players[idx].bestscore) {
+
+		}
+	}
+	
 }
 
 int main(void) {
 	seed();
 	game();
 }
-

@@ -37,12 +37,19 @@ int gameplay(gamestate* g, int lev, int* outsc) {
 
 	int suc = 1;
 
+	printf("범위 <1~%d> 기회는%d번!\n", g->maxnum, g->maxatt);
+
 	while (1) {
 		printf("입력: ");
-		scanf_s("%d", &guess);
+		if (scanf_s("%d", &guess) != 1 ||guess<=0 || guess > g->maxnum) {
+			printf("숫자를 올바르게 입력하세요\n");
+			while (getchar() != '\n');
+			continue;
+		}
+
 		g->att++;
 		if (g->att > g->maxatt) {
-			printf("최대시도횟수 초과\n");
+			printf("최대시도횟수 초과...정답<%d>\n**GAME OVER**\n", g->answer);
 			suc = 0;
 			break;
 		}
@@ -64,11 +71,18 @@ int gameplay(gamestate* g, int lev, int* outsc) {
 		int sc = 0;
 	if (suc == 1) {
 			sc = score(g->att, g->maxatt, bonus, lev);
+			
+			*outsc += sc;
+
+			printf("%d점!\n누적<%d점>", sc, *outsc);
+
 		}
+	else printf("누적<%d점>", *outsc);
+	
 
-	*outsc += sc;
+	/**outsc += sc;
 
-	printf("%d점!\n누적<%d점>", sc, *outsc);
+	printf("%d점!\n누적<%d점>", sc, *outsc);*/
 
 	return suc;
 }
@@ -80,39 +94,46 @@ void game() {
 
 	gamestate g = { 0 };
 
-	printf("업다운게임\n난이도 선택(1~3): ");
-	scanf_s("%d", &lev);
+	printf("업다운게임~\n");
 
-	//maxnum, maxatt 에 값 넣기
-	switch (lev) {
-	case 1:
-		g.maxnum = 30;
-		g.maxatt = 15;
-		break;
-	case 2:
-		g.maxnum = 500;
-		g.maxatt = 10;
-		break;
-	case 3:
-		g.maxnum = 100;
-		g.maxatt = 10;
-		break;
-	}
-
-	
-	
-
+	//원하는만큼 게임 진행
 	while (1) {
 
-		g.answer = gen_answer(g.maxnum); //게임 정보에 (정답생성함수)로 생성한 답을 넣어주기
+		while (1) { //매 판마다 난도조절 가능
+			printf("난이도 선택(1~3): ");
+			scanf_s("%d", &lev);
+			if (lev <= 3 && lev >= 1) {
+				break;
+			}
+			printf("1~3중 입력하세요\n");
+		}
 
-		if (gameplay(&g, lev, &outsc) == 0) {
+		//난도에 따라 maxnum, maxatt 에 값 넣기
+		switch (lev) {
+		case 1:
+			g.maxnum = 30;
+			g.maxatt = 15;
+			break;
+		case 2:
+			g.maxnum = 50;
+			g.maxatt = 10;
+			break;
+		case 3:
+			g.maxnum = 100;
+			g.maxatt = 10;
+			break;
+		}
+
+		g.answer = gen_answer(g.maxnum); //게임 정보에 (정답생성함수)로 답 생성후 넣어주기
+
+		if (gameplay(&g, lev, &outsc) == 0) { //맞추기실패시 진행불가
 			break;
 		}
 		
 		printf("계속하시겠습니까? (Y or N) : ");
 		scanf_s(" %c", &a, 1);
 		if (a == 'N'||a=='n') {
+			printf("게임 종료");
 			break;
 		}
 

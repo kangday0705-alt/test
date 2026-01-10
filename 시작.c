@@ -105,6 +105,27 @@ int find(player p[], int count, char* name) {
 	//신규인지 판별>-1
 }
 
+void rank(player p[], int n) {
+
+	//점수비교정렬
+	for (int j = 0; j < n-1; j++) {
+		for (int i = 0; i < n-1-j; i++) {
+			if (p[i].bestscore < p[i+1].bestscore) {
+				player atm = p[i+1];
+				p[i+1] = p[i];
+				p[i] = atm;
+			}
+		}
+	}
+
+	//랭킹프린트
+	printf("*****랭킹*****\n");
+	for (int i = 0; i <= n; i++) {
+		printf("%d_ %s %d\n", i + 1, p[i].name, p[i].bestscore);
+	}
+
+}
+
 void game() {
 	int lev, pcount=1;
 	char name[20];
@@ -156,3 +177,4 @@ int main(void) {
 	seed();
 	game();
 }
+

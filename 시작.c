@@ -116,6 +116,21 @@ int read(player p[], int max) {
 
 }
 
+//중복플레이어여부 리턴, 점수갱신
+int find(player p, player pp[], int count) {
+	int idx = 1;
+	//FILE* fp = fopen("player.txt", "r");
+	for (int i = 0; i < count; i++) {
+		if (strcmp(p.name,pp[i].name)==0) {
+			if (p.bestscore > pp[i].bestscore) {
+				pp[i].bestscore = p.bestscore;
+			}
+			idx = 0;
+		}
+	}
+	return idx;
+}
+
 //플레이어배열 출력
 void rank(player p[], int n) {
 
@@ -208,7 +223,8 @@ void game() {
 	
 	me.bestscore = outsc;//
 	int count = read(pp, max);//
-	if(count < max) {
+	
+	if(find(me, pp, count) == 1 && count < max) {
 		pp[count] = me;
 		count++;
 		}
@@ -230,3 +246,4 @@ int main(void) {
 	seed();
 	game();
 }
+

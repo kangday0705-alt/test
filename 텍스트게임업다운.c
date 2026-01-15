@@ -94,7 +94,8 @@ int gameplay(gamestate* g, int lev, int* outsc) {
 void save(player p[], int count) {
 
 	FILE* fp = fopen("player.txt", "w"); //파일 만들고 포인터 선언
-
+	if (!fp) return;
+	
 	for (int i = 0; i < count; i++) {
 		fprintf(fp, "%s %d\n", p[i].name, p[i].bestscore); //이름 점수\n형식 입력
 	}
@@ -107,7 +108,7 @@ int read(player p[], int max) {
 	if (!fp) return 0;
 
 	int count = 0;
-	while (fscanf_s(fp, "%s %d\n", p[count].name, 20, &p[count].bestscore) != EOF) {//이름 점수\n 형식으로 끝까지 읽으며 p[]에 저장하기 
+	while (fscanf_s(fp, "%s %d\n", p[count].name, 20, &p[count].bestscore) == 2) {//이름 점수\n 형식으로 끝까지 읽으며 p[]에 저장하기 
 		count++;
 		if (count >= max) break;
 	}
@@ -118,17 +119,16 @@ int read(player p[], int max) {
 
 //중복플레이어여부 리턴, 점수갱신
 int find(player p, player pp[], int count) {
-	int idx = 1;
 	//FILE* fp = fopen("player.txt", "r");
 	for (int i = 0; i < count; i++) {
 		if (strcmp(p.name,pp[i].name)==0) {
 			if (p.bestscore > pp[i].bestscore) {
 				pp[i].bestscore = p.bestscore;
 			}
-			idx = 0;
+			return 0;
 		}
 	}
-	return idx;
+	return 1;
 }
 
 //플레이어배열 출력
@@ -246,4 +246,5 @@ int main(void) {
 	seed();
 	game();
 }
+
 

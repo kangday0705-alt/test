@@ -41,9 +41,22 @@ def play(maxnum, maxatt): #정답 생성후 입력비교, 시도 횟수 리턴
 #             return a
 
 def file_read():
+
+    players =[]
+
     with open("player.txt", "r", encoding="utf-8") as f:
         for line in f:
-            print(line)
+            pname, psc =line.split() #문법! 한줄을 공백 기준으로 나눠 변수에 넣기
+
+            psc=float(psc)
+            players.append((pname,psc))
+
+        players.sort(key=lambda x: x[1],reverse=True) #sort 문법
+
+        for pname, psc in players:
+            print(pname, psc)
+    return players
+
 
 def file_write(name, sc):
     with open("player.txt", "a", encoding="utf-8") as f:
@@ -132,3 +145,4 @@ def main():
 
 if __name__=="__main__":
     main()
+

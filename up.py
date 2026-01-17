@@ -1,4 +1,5 @@
 import random
+import os
 
 #play, game, score, main
 
@@ -31,52 +32,84 @@ def play(maxnum, maxatt): #정답 생성후 입력비교, 시도 횟수 리턴
         elif x > ans:
             print("down")
 
+# def file_read():
+#     with open("player.txt", "r", encoding="utf-8") as f:
+#         a=0
+#         for line in f:
+#             a+=1
+#             print(line.strip())
+#             return a
+
+def file_read():
+    with open("player.txt", "r", encoding="utf-8") as f:
+        for line in f:
+            print(line)
+
+def file_write(name, sc):
+    with open("player.txt", "a", encoding="utf-8") as f:
+        f.write(f"{name} {sc}") #롸이트 sc뒤에 \n만 뻈는데 이번에는 아예 줄바꿈이 없어
+
+
 
 
 def game(): #난이도 선택 후 플레이
 
     print("업다운 게임!")
     sc=0
-    
-    while True: #난이도선택
-        a=int(input("난이도를 선택하세요(1~3): ").strip())
-        
-        match a:
-            case 1:
-                maxnum=50
-                maxatt=10
-                break
-            case 2:
-                maxnum=50
-                maxatt=5
-                break
-            case 3:
-                maxnum=100
-                maxatt=5
-                break
-            case _:
-                print("다시입력")
 
+    name = input("플레이어 이름: ").strip()
 
     while True: #플레이루프
         
+        while True: #난이도선택
+            b=input("난이도를 선택하세요(1~3): ").strip()
+            a=int(b)
+            match a:
+                case 1:
+                    maxnum=50
+                    maxatt=10
+                    break
+                case 2:
+                    maxnum=50
+                    maxatt=5
+                    break
+                case 3:
+                    maxnum=100
+                    maxatt=5
+                    break
+                case _:
+                    print("다시입력")
+
+
         #플레이 어템트를 스코어로 넘겨 계산
-        nowsc=score(a,play(maxnum,maxatt),maxatt)
+        att=play(maxnum,maxatt)
+        nowsc=score(a,att,maxatt)
         
         sc+=nowsc
         print(f"점수:{nowsc}점, 누적{sc}") #이번점수를 누적시켜 출력
 
         if nowsc==0:
             break   #이번판 실패시 기회 없음
+        
+        while True:
+            con=input("계속하시겠습니까?(Y or N): ")
+            match con:
+                case "N"|"n":
+                    file_write(name,sc)
+                    file_read()
+                    return
 
-        con=input("계속하시겠습니까?(Y or N): ")
-        match con:
-            case "N"|"n":
-                break
-            case "Y"|"y":
-                continue
-            case _:
-                print("다시입력")
+                case "Y"|"y":
+                    break #YN루프종료후 플레이루프
+                case _:
+                    print("다시입력")
+                    continue #YN루프 반복
+
+    file_write(name,sc)
+    file_read()
+
+    
+
 
 def score(lev, att, maxatt):
 
@@ -90,6 +123,12 @@ def score(lev, att, maxatt):
 
 def main():
     game()
+    #os.remove("player.txt")
+
+    
+
+    
+
 
 if __name__=="__main__":
     main()

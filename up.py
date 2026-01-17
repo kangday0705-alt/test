@@ -58,9 +58,18 @@ def file_read():
     return players
 
 
-def file_write(name, sc):
-    with open("player.txt", "a", encoding="utf-8") as f:
-        f.write(f"{name} {sc}") #롸이트 sc뒤에 \n만 뻈는데 이번에는 아예 줄바꿈이 없어
+def file_write(players, name, sc): #개뻐킹쓰레기함수
+
+
+    with open("player.txt", "w", encoding="utf-8") as f:
+        #for line in f:
+        for (pname,psc) in players:
+            if pname == name:
+                if psc < sc:
+                    #하 어쩌란거임
+                else: f.write(f"{pname} {psc}\n")
+            else: f.write(f"{name} {sc}")
+            f.write(f"{pname} {psc}\n")
 
 
 
@@ -145,4 +154,5 @@ def main():
 
 if __name__=="__main__":
     main()
+
 

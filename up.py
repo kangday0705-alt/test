@@ -14,7 +14,11 @@ def play(maxnum, maxatt): #정답 생성후 입력비교, 시도 횟수 리턴
     while True: #입력받아 업다운 출력, 실패시none 성공시att 리턴
         
         s = input("입력: ").strip()
-        x = int(s)
+        try:
+            x = int(s)
+        except ValueError:
+            print("숫자를 입력하시오")
+            continue
 
         if x<1 or x>maxnum:
             print("범위 확인!")
@@ -43,12 +47,15 @@ def play(maxnum, maxatt): #정답 생성후 입력비교, 시도 횟수 리턴
 def file_read():
     players=[]
 
-    with open("player.txt", "r", encoding="utf-8") as f:
-        for line in f:
-            pname, psc =line.split() #문법! 한줄을 공백 기준으로 나눠 변수에 넣기
+    try:
+        with open("player.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                pname, psc =line.split() #문법! 한줄을 공백 기준으로 나눠 변수에 넣기
 
-            psc=float(psc)
-            players.append((pname,psc))
+                psc=float(psc)
+                players.append((pname,psc))
+    except FileNotFoundError:
+        pass
 
     return players
 
@@ -72,6 +79,8 @@ def file_write(players, name, sc):
                 players[i] = (name,sc)
             break
         i+=1
+    
+
 
     if found==False:
         players.append((name, sc))
@@ -83,9 +92,13 @@ def file_write(players, name, sc):
 
 def rank(players):
     players.sort(key=lambda x: x[1],reverse=True) #sort 문법
-
+    i=0
     for pname, psc in players:
-        print(pname, psc)
+        i+=1
+        print(f"{i}위: {pname}, {psc}")
+        
+        if i==5:
+            break
 
 
 
@@ -95,14 +108,24 @@ def game(): #난이도 선택 후 플레이
 
     print("업다운 게임!")
     sc=0
+    players = file_read()
 
-    name = input("플레이어 이름: ").strip()
+    while True:
+        name = input("플레이어 이름: ").strip()
+        if name == "":
+            continue
+        break
 
     while True: #플레이루프
         
         while True: #난이도선택
             b=input("난이도를 선택하세요(1~3): ").strip()
-            a=int(b)
+            try:
+                a=int(b)
+            except ValueError:
+                print("숫자를 입력하시오")
+                continue
+
             match a:
                 case 1:
                     maxnum=50
@@ -134,8 +157,8 @@ def game(): #난이도 선택 후 플레이
             con=input("계속하시겠습니까?(Y or N): ")
             match con:
                 case "N"|"n":
-                    file_write(name,sc)
-                    file_read()
+                    file_write(players, name,sc)
+                    rank(players)
                     return
 
                 case "Y"|"y":
@@ -144,7 +167,7 @@ def game(): #난이도 선택 후 플레이
                     print("다시입력")
                     continue #YN루프 반복
                     
-    players = file_read()
+    
     file_write(players, name,sc)
     rank(players)
 

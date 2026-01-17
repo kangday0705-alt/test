@@ -41,8 +41,7 @@ def play(maxnum, maxatt): #정답 생성후 입력비교, 시도 횟수 리턴
 #             return a
 
 def file_read():
-
-    players =[]
+    players=[]
 
     with open("player.txt", "r", encoding="utf-8") as f:
         for line in f:
@@ -51,10 +50,6 @@ def file_read():
             psc=float(psc)
             players.append((pname,psc))
 
-        players.sort(key=lambda x: x[1],reverse=True) #sort 문법
-
-        for pname, psc in players:
-            print(pname, psc)
     return players
 
 
@@ -75,7 +70,7 @@ def file_write(players, name, sc):
             found=True 
             if psc < sc:
                 players[i] = (name,sc)
-                break
+            break
         i+=1
 
     if found==False:
@@ -85,10 +80,14 @@ def file_write(players, name, sc):
         for pname,psc in players:
             f.write(f"{pname} {psc}\n")
 
-# def rank(a):
-#     for i in range(a):
-#         for j in range(a):
-#             if j>i:
+
+def rank(players):
+    players.sort(key=lambda x: x[1],reverse=True) #sort 문법
+
+    for pname, psc in players:
+        print(pname, psc)
+
+
 
 
 
@@ -144,9 +143,10 @@ def game(): #난이도 선택 후 플레이
                 case _:
                     print("다시입력")
                     continue #YN루프 반복
-
-    file_write(name,sc)
-    file_read()
+                    
+    players = file_read()
+    file_write(players, name,sc)
+    rank(players)
 
     
 
@@ -172,3 +172,4 @@ def main():
 
 if __name__=="__main__":
     main()
+
